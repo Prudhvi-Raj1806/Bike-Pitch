@@ -1,1 +1,400 @@
-!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposal: Strategic Mobility & Household Savings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfaf8;
+            color: #1c1917;
+            overflow-x: hidden;
+        }
+
+        .screen {
+            display: none;
+            min-height: 100vh;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .reason-step {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .reason-step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-square {
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+        }
+
+        .card-square {
+            border-radius: 4px;
+            background: white;
+            border: 1px solid #e7e5e4;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .icon-box {
+            background-color: #f5f5f4;
+            padding: 12px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e7e5e4;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="home-screen" class="screen active flex-col items-center justify-center p-6 text-center">
+        <div class="max-w-xl w-full border-2 border-stone-900 p-8 md:p-16 bg-white shadow-[8px_8px_0px_0px_rgba(28,25,23,1)]">
+            <div class="mb-8 flex justify-center">
+                <div class="icon-box"><i data-lucide="bike" class="w-12 h-12 text-stone-900"></i></div>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">MOM, I HAVE A SERIOUS QUESTION.</h1>
+            <p class="text-stone-500 mb-12 font-medium">Can we talk about the FZ-X Hybrid?</p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="sayYes()" class="btn-square w-full sm:w-48 px-6 py-4 bg-emerald-600 text-white hover:bg-emerald-700 shadow-[4px_4px_0px_0px_rgba(6,78,59,1)]">
+                    Yes, absolutely
+                </button>
+                <button onclick="rejectInitial()" class="btn-square w-full sm:w-48 px-6 py-4 bg-stone-900 text-white hover:bg-stone-800 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    No.
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pitch-screen" class="screen flex-col items-center p-4 md:p-12 bg-stone-50">
+        <div class="max-w-4xl w-full">
+            <!-- Header/Breadcrumbs -->
+            <div class="mb-12 border-b border-stone-200 pb-6 flex justify-between items-end">
+                <div>
+                    <p id="step-label" class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-1">Observation 01</p>
+                    <h2 id="step-title" class="text-2xl font-bold">The Economics of Movement</h2>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs font-bold text-stone-400 uppercase tracking-widest">Household Project</p>
+                    <p class="font-bold">2024-2027</p>
+                </div>
+            </div>
+
+            <!-- Reason 1: Financials -->
+            <div id="reason-1" class="reason-step active space-y-8">
+                <p class="text-stone-600 leading-relaxed text-lg max-w-2xl">
+                    Every month, our household budget loses over ₹10,000 to "dead spending" (cabs). By switching to the FZ-X, we retain 70% of that capital.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-0 border border-stone-200 shadow-sm">
+                    <div class="p-8 bg-white border-r border-stone-200">
+                        <div class="flex items-center gap-3 mb-4 text-stone-400">
+                            <i data-lucide="trending-down" class="w-5 h-5"></i>
+                            <span class="text-xs font-bold uppercase tracking-tighter">Cab Cost</span>
+                        </div>
+                        <div class="text-3xl font-bold">₹10,500</div>
+                    </div>
+                    <div class="p-8 bg-white border-r border-stone-200">
+                        <div class="flex items-center gap-3 mb-4 text-amber-600">
+                            <i data-lucide="fuel" class="w-5 h-5"></i>
+                            <span class="text-xs font-bold uppercase tracking-tighter">Fuel & Maintenance</span>
+                        </div>
+                        <div class="text-3xl font-bold">₹3,200</div>
+                    </div>
+                    <div class="p-8 bg-emerald-50">
+                        <div class="flex items-center gap-3 mb-4 text-emerald-700">
+                            <i data-lucide="wallet" class="w-5 h-5"></i>
+                            <span class="text-xs font-bold uppercase tracking-tighter">Monthly Retained</span>
+                        </div>
+                        <div class="text-3xl font-bold text-emerald-800">₹7,300</div>
+                    </div>
+                </div>
+
+                <div class="card-square p-8">
+                    <h3 class="font-bold mb-6 text-sm uppercase tracking-widest text-stone-400">Projected Capital Retention (3 Years)</h3>
+                    <div class="chart-container">
+                        <canvas id="savingsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reason 2: Safety Systems -->
+            <div id="reason-2" class="reason-step space-y-8">
+                <p class="text-stone-600 leading-relaxed text-lg max-w-2xl">
+                    The FZ-X is not just a bike; it is a safety platform designed to mitigate the errors of other drivers on the road.
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="card-square p-6 flex gap-5">
+                        <div class="shrink-0"><i data-lucide="shield-check" class="w-8 h-8 text-stone-900"></i></div>
+                        <div>
+                            <h4 class="font-bold mb-1">Electronic ABS</h4>
+                            <p class="text-sm text-stone-500">Active anti-lock braking ensures the bike never skids, even on wet or oily asphalt.</p>
+                        </div>
+                    </div>
+                    <div class="card-square p-6 flex gap-5">
+                        <div class="shrink-0"><i data-lucide="activity" class="w-8 h-8 text-stone-900"></i></div>
+                        <div>
+                            <h4 class="font-bold mb-1">Traction Control</h4>
+                            <p class="text-sm text-stone-500">Sensors cut engine power instantly if the rear wheel slips on sand or mud.</p>
+                        </div>
+                    </div>
+                    <div class="card-square p-6 flex gap-5">
+                        <div class="shrink-0"><i data-lucide="sun" class="w-8 h-8 text-stone-900"></i></div>
+                        <div>
+                            <h4 class="font-bold mb-1">High-Lumen LEDs</h4>
+                            <p class="text-sm text-stone-500">Daytime Running Lights (DRLs) ensure visibility to heavy vehicles in rain or fog.</p>
+                        </div>
+                    </div>
+                    <div class="card-square p-6 flex gap-5">
+                        <div class="shrink-0"><i data-lucide="layers" class="w-8 h-8 text-stone-900"></i></div>
+                        <div>
+                            <h4 class="font-bold mb-1">Block Pattern Tires</h4>
+                            <p class="text-sm text-stone-500">Industrial-grade grip depth for maximum stability on uneven city terrain.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reason 3: Market Comparison -->
+            <div id="reason-3" class="reason-step space-y-8">
+                <p class="text-stone-600 leading-relaxed text-lg max-w-2xl">
+                    I have vetted the alternatives. The FZ-X is the only option that meets both our safety and financial benchmarks.
+                </p>
+
+                <div class="space-y-4">
+                    <div class="card-square p-6 border-l-4 border-l-stone-300 opacity-60">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-bold">Alternative: TVS Raider 125</h4>
+                            <span class="text-xs font-bold bg-stone-100 px-2 py-1">FAIL: NO ABS</span>
+                        </div>
+                        <p class="text-sm text-stone-500 leading-relaxed">Lower entry price, but lacks the primary safety system (ABS). Risk level is unacceptable.</p>
+                    </div>
+                    <div class="card-square p-6 border-l-4 border-l-stone-300 opacity-60">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-bold">Alternative: TVS Ronin 225</h4>
+                            <span class="text-xs font-bold bg-stone-100 px-2 py-1">FAIL: Opex</span>
+                        </div>
+                        <p class="text-sm text-stone-500 leading-relaxed">Higher displacement leads to fuel inefficiency. Monthly maintenance exceeds budget limits.</p>
+                    </div>
+                    <div class="card-square p-6 border-l-4 border-l-emerald-500 bg-emerald-50/30">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="font-bold text-emerald-900">Optimal Choice: Yamaha FZ-X Hybrid</h4>
+                            <span class="text-xs font-bold bg-emerald-600 text-white px-2 py-1">PASS: OPTIMIZED</span>
+                        </div>
+                        <p class="text-sm text-stone-700 leading-relaxed font-medium">The equilibrium point between maximum safety technology and operational cost efficiency.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reason 4: Personal Contract -->
+            <div id="reason-4" class="reason-step space-y-8">
+                <p class="text-stone-600 leading-relaxed text-lg max-w-2xl">
+                    To show my commitment, I am formally agreeing to the following operational standards.
+                </p>
+
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="card-square p-5 flex items-center gap-4 bg-white">
+                        <div class="bg-stone-100 p-3"><i data-lucide="check-square" class="w-5 h-5"></i></div>
+                        <p class="font-bold text-sm">Mandatory full gear (Helmet/Gloves/Jacket) for every trip.</p>
+                    </div>
+                    <div class="card-square p-5 flex items-center gap-4 bg-white">
+                        <div class="bg-stone-100 p-3"><i data-lucide="check-square" class="w-5 h-5"></i></div>
+                        <p class="font-bold text-sm">Personal responsibility for all recurring fuel costs.</p>
+                    </div>
+                    <div class="card-square p-5 flex items-center gap-4 bg-white">
+                        <div class="bg-stone-100 p-3"><i data-lucide="check-square" class="w-5 h-5"></i></div>
+                        <p class="font-bold text-sm">Strict zero-distraction policy (No phone usage while riding).</p>
+                    </div>
+                    <div class="card-square p-5 flex items-center gap-4 bg-white">
+                        <div class="bg-stone-100 p-3"><i data-lucide="check-square" class="w-5 h-5"></i></div>
+                        <p class="font-bold text-sm">Proactive maintenance schedule to protect the asset's value.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-16 flex flex-col sm:flex-row gap-4">
+                <button id="btn-agree" onclick="sayYes()" class="btn-square flex-1 py-5 bg-emerald-600 text-white shadow-[4px_4px_0px_0px_rgba(6,78,59,1)]">
+                    Approve Proposal
+                </button>
+                <button id="btn-next" onclick="nextReason()" class="btn-square flex-1 py-5 bg-stone-900 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    I still have concerns
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="victory-screen" class="screen flex-col items-center justify-center p-6 text-center">
+        <div class="max-w-xl w-full border-2 border-stone-900 p-8 md:p-16 bg-white shadow-[8px_8px_0px_0px_rgba(28,25,23,1)]">
+            <div class="mb-8 flex justify-center">
+                <div class="icon-box bg-emerald-50 border-emerald-200"><i data-lucide="party-popper" class="w-12 h-12 text-emerald-600"></i></div>
+            </div>
+            <h1 class="text-4xl font-bold mb-4">DECISION APPROVED</h1>
+            <p class="text-stone-500 mb-8 font-medium">Thank you for trusting my judgment. This is a significant win for our household's mobility and budget.</p>
+            
+            <div class="p-6 border border-stone-200 bg-stone-50 mb-10 text-left">
+                <div class="flex items-center gap-3 mb-2">
+                    <i data-lucide="info" class="w-4 h-4 text-stone-400"></i>
+                    <span class="text-xs font-bold uppercase text-stone-400">Summary Impact</span>
+                </div>
+                <p class="text-2xl font-bold">₹2,62,800 Saved</p>
+                <p class="text-xs text-stone-500 mt-1 uppercase tracking-wider">Estimated 3-Year Projection</p>
+            </div>
+
+            <button onclick="location.reload()" class="btn-square w-full py-4 bg-stone-900 text-white hover:bg-stone-800">
+                Finish & Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentReason = 1;
+        const totalReasons = 4;
+        let chart = null;
+
+        // Initialize icons
+        lucide.createIcons();
+
+        function rejectInitial() {
+            document.getElementById('home-screen').classList.remove('active');
+            document.getElementById('pitch-screen').classList.add('active');
+            initChart();
+        }
+
+        const stepData = [
+            { label: "Observation 01", title: "The Economics of Movement" },
+            { label: "Observation 02", title: "Active Risk Mitigation" },
+            { label: "Observation 03", title: "Comparative Market Analysis" },
+            { label: "Observation 04", title: "Operator Accountability" }
+        ];
+
+        function nextReason() {
+            if (currentReason < totalReasons) {
+                document.getElementById(`reason-${currentReason}`).classList.remove('active');
+                currentReason++;
+                document.getElementById(`reason-${currentReason}`).classList.add('active');
+                
+                // Update Labels
+                document.getElementById('step-label').innerText = stepData[currentReason-1].label;
+                document.getElementById('step-title').innerText = stepData[currentReason-1].title;
+                
+                if (currentReason === totalReasons) {
+                    document.getElementById('btn-next').innerText = "Wait, show me step 1 again";
+                }
+            } else {
+                // Loop back
+                document.getElementById(`reason-${currentReason}`).classList.remove('active');
+                currentReason = 1;
+                document.getElementById(`reason-${currentReason}`).classList.add('active');
+                document.getElementById('step-label').innerText = stepData[0].label;
+                document.getElementById('step-title').innerText = stepData[0].title;
+                document.getElementById('btn-next').innerText = "I still have concerns";
+                initChart();
+            }
+            lucide.createIcons();
+        }
+
+        function sayYes() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('victory-screen').classList.add('active');
+            lucide.createIcons();
+            
+            // Celebration!
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('savingsChart').getContext('2d');
+            if(chart) chart.destroy();
+            
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Year 1', 'Year 2', 'Year 3'],
+                    datasets: [
+                        {
+                            label: 'Alternative (Cab Costs)',
+                            data: [126000, 252000, 378000],
+                            backgroundColor: '#e7e5e4',
+                            borderRadius: 0,
+                        },
+                        {
+                            label: 'Retained Wealth (Savings)',
+                            data: [87600, 175200, 262800],
+                            backgroundColor: '#d97706',
+                            borderRadius: 0,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => '₹' + (value / 1000) + 'k',
+                                font: { weight: 'bold' }
+                            },
+                            grid: { color: '#f5f5f4' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
